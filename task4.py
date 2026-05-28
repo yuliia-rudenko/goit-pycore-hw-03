@@ -12,21 +12,28 @@ def get_upcoming_birthdays(users):
     upcoming = []
 
     for user in users:
+        # Перетворюємо рядок дати народження в об'єкт date
         birthday = datetime.strptime(user["birthday"], "%Y.%m.%d").date()
+
+        # Замінюємо рік на поточний
         birthday_this_year = birthday.replace(year=today.year)
 
+        # Якщо ДН вже минув цього року — беремо наступний рік
         if birthday_this_year < today:
             birthday_this_year = birthday_this_year.replace(year=today.year + 1)
 
+        # Перевіряємо чи ДН потрапляє в найближчі 7 днів
         delta = (birthday_this_year - today).days
         if 0 <= delta < 7:
             congratulation_date = birthday_this_year
 
-            if congratulation_date.weekday() == 5:
+            # Якщо ДН на вихідний — переносимо на понеділок
+            if congratulation_date.weekday() == 5:    # субота → +2 дні
                 congratulation_date += timedelta(days=2)
-            elif congratulation_date.weekday() == 6:
+            elif congratulation_date.weekday() == 6:  # неділя → +1 день
                 congratulation_date += timedelta(days=1)
 
+            # Додаємо користувача до списку привітань
             upcoming.append({
                 "name": user["name"],
                 "congratulation_date": congratulation_date.strftime("%Y.%m.%d")
